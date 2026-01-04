@@ -18,6 +18,7 @@ import com.lowagie.text.pdf.PdfPTable;
 import com.lowagie.text.pdf.PdfWriter;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
@@ -57,6 +58,7 @@ public class ServiceFormServiceImpl implements ServiceFormService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public ServiceFormResponse getServiceForm(long id) {
         ServiceForm serviceForm = serviceFormRepository.findById(id)
                 .orElseThrow(() -> new BaseException(
@@ -66,6 +68,7 @@ public class ServiceFormServiceImpl implements ServiceFormService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<ServiceFormResponse> getServiceForms() {
         return serviceFormRepository.findAll()
                 .stream()
@@ -74,6 +77,7 @@ public class ServiceFormServiceImpl implements ServiceFormService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<ServiceFormResponse> getCustomerServiceForms(long customerId) {
         return serviceFormRepository.findAllByCustomerId(customerId)
                 .stream()
