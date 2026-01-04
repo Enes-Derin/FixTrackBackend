@@ -36,10 +36,10 @@ public class ServiceFormControllerImpl extends RestBaseController implements Ser
         return success(serviceFormService.getServiceForms());
     }
 
-    @GetMapping("/customerId/{id}")
-    @Override
-    public RootEntity<List<ServiceFormResponse>> getCustomerServiceForms(@PathVariable Long id) {
-        return success(serviceFormService.getCustomerServiceForms(id));
+    @GetMapping("/by-customer/{customerId}")
+    public RootEntity<List<ServiceFormResponse>> getCustomerServiceForms(
+            @PathVariable Long customerId) {
+        return success(serviceFormService.getCustomerServiceForms(customerId));
     }
 
     @PostMapping
