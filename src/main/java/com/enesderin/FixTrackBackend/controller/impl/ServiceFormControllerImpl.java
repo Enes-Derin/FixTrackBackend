@@ -26,7 +26,7 @@ public class ServiceFormControllerImpl extends RestBaseController implements Ser
 
     @GetMapping("/{id}")
     @Override
-    public RootEntity<ServiceFormResponse> getServiceForm(@PathVariable long id) {
+    public RootEntity<ServiceFormResponse> getServiceForm(@PathVariable Long id) {
         return success(serviceFormService.getServiceForm(id));
     }
 
@@ -36,10 +36,10 @@ public class ServiceFormControllerImpl extends RestBaseController implements Ser
         return success(serviceFormService.getServiceForms());
     }
 
-    @GetMapping("/customerId/{customerId}")
+    @GetMapping("/customerId/{id}")
     @Override
-    public RootEntity<List<ServiceFormResponse>> getCustomerServiceForms(@PathVariable long customerId) {
-        return success(serviceFormService.getCustomerServiceForms(customerId));
+    public RootEntity<List<ServiceFormResponse>> getCustomerServiceForms(@PathVariable Long id) {
+        return success(serviceFormService.getCustomerServiceForms(id));
     }
 
     @PostMapping
@@ -96,7 +96,7 @@ public class ServiceFormControllerImpl extends RestBaseController implements Ser
     @PutMapping("/{id}/signatures")
     @Override
     public RootEntity<ServiceFormResponse> updateServiceFormSignatures(
-            @PathVariable long id,
+            @PathVariable Long id,
             @Valid @RequestBody UpdateSignatureRequest request) {
         return success(serviceFormService.updateServiceFormSignatures(
                 id,

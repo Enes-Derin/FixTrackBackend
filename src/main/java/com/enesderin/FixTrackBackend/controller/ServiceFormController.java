@@ -8,11 +8,11 @@ import com.enesderin.FixTrackBackend.dto.response.ServiceFormResponse;
 import java.util.List;
 
 public interface ServiceFormController {
-    RootEntity<ServiceFormResponse> getServiceForm(long id);
+    RootEntity<ServiceFormResponse> getServiceForm(Long id);
     RootEntity<List<ServiceFormResponse>> getServiceForms();
-    RootEntity<List<ServiceFormResponse>> getCustomerServiceForms(long customerId);
+    RootEntity<List<ServiceFormResponse>> getCustomerServiceForms(Long id);
     RootEntity<ServiceFormResponse> addServiceForm(ServiceFormRequest serviceForm);
-    RootEntity<ServiceFormResponse> updateServiceFormSignatures(long id, UpdateSignatureRequest request);
+    RootEntity<ServiceFormResponse> updateServiceFormSignatures(Long id, UpdateSignatureRequest request);
     byte[] downloadServiceFormPdf(long id);
     RootEntity<Long> deleteServiceForm(long id);
 }
