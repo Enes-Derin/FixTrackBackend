@@ -3,7 +3,10 @@ package com.enesderin.FixTrackBackend.security;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
@@ -13,11 +16,20 @@ import java.util.Date;
 @Service
 public class JwtService {
 
-    private String KEY = "35bczQAq7ua/y0+Wjka9qxlzEbzqqiZKb5jacQp/YfA=";
+    private final String secret;
+
+    public JwtService(@Value("${jwt.secret}") String secret) {
+        this.secret = secret;
+    }
 
     public String generateToken(UserDetails user) {
         return Jwts.builder()
-                .claim("authorities" , user.getAuthorities())
+                .claim(
+                        "authorities",
+                        user.getAuthorities().stream()
+                                .map(GrantedAuthority::getAuthority)
+                                .toList()
+                )
                 .setSubject(user.getUsername())
                 .setExpiration(new Date(System.currentTimeMillis()+1000*60*60*2))
                 .setIssuedAt(new Date())
@@ -40,14 +52,20 @@ public class JwtService {
         return parseToken(token).getExpiration();
     }
 
-    public boolean validateToken(String token) {
-        Claims claims = parseToken(token);
-        Date expiration = claims.getExpiration();
-        return !expiration.before(new Date());
+    public boolean validateToken(String token, UserDetails userDetails) {
+        final String username = getUsernameFromToken(token);
+        return (
+                username.equals(userDetails.getUsername())
+                        && !isTokenExpired(token)
+        );
+    }
+
+    private boolean isTokenExpired(String token) {
+        return getExpirationDateFromToken(token).before(new Date());
     }
 
 
     public Key getKey() {
-        return Keys.hmacShaKeyFor(KEY.getBytes());
+        return Keys.hmacShaKeyFor(Decoders.BASE64.decode(secret));
     }
 }
