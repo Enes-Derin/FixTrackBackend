@@ -1,17 +1,34 @@
-# Temel Java çalışma zamanı ortamını tanımlar
-FROM openjdk:17-jdk-alpine
+# ===========================
+# 1) BUILD STAGE
+# ===========================
+FROM maven:3.9.6-eclipse-temurin-17 AS build
 
-# Uygulama içinde kullanılacak ortam değişkenlerini dinamikleştirmek için bir argüman belirtiyoruz
-ARG JAR_FILE=target/FixTrackBackend-0.0.1-SNAPSHOT.jar
-
-# Çalışma dizinini ayarla
 WORKDIR /app
 
-# Maven tarafından oluşturulan jar dosyasını çalışma dizinine kopyala
-COPY ${JAR_FILE} app.jar
+# pom.xml ve kaynak kodları kopyala
+COPY pom.xml .
+COPY src ./src
 
-# Uygulamanızı başlatmak için ENTRYPOINT komutunu kullanıyoruz
-ENTRYPOINT ["java", "-jar", "/app/app.jar"]
+# Jar oluştur
+RUN mvn clean package -DskipTests
 
-# Yayını dışa açılması için 8080 portunu açıyoruz
+
+# ===========================
+# 2) RUN STAGE
+# ===========================
+FROM eclipse-temurin:17-jdk
+
+WORKDIR /app
+
+# Build aşamasında oluşturulan jar dosyasını kopyala
+COPY --from=build /app/target/*.jar app.jar
+
+
+
+
+
+# Uygulama 8080 portunda çalışacak
 EXPOSE 8080
+
+# Çalıştırma komutu
+ENTRYPOINT ["java", "-jar", "app.jar"]
